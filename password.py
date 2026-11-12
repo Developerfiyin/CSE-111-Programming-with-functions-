@@ -1,4 +1,6 @@
-
+# Password Strength Checker
+# Requested by: María García (Security Team)
+# Design by: Sven Larson (Software Architect)
 #
 # This program lets employees type in passwords and see how strong they are.
 # The strength is a number from 0 (very weak) to 5 (very strong).
@@ -7,15 +9,22 @@
 #   dictionary.txt    - about 70,000 words, one word per line
 #   toppasswords.txt  - the top 1 million passwords, one per line
 #
-# OPTIONAL COMPONENT (added by me):
-#   The function give_tips() looks at a password and tells the user which
-#   kinds of characters are missing (upper case, lower case, digits, symbols)
-#   and if the password is short. This helps employees learn HOW to make
-#   their password better, which is the goal of this tool. It is only
-#   called from the main program, so password_strength() still works
-#   exactly as Sven designed it.
+# OPTIONAL COMPONENTS (added by me, the junior developer):
+#   1. give_tips()          - tells the user which kinds of characters are
+#                             missing so they learn HOW to improve a password.
+#   2. show_meter()         - draws a little strength bar like [###-----]
+#                             so the result is easy to see at a glance.
+#   3. make_passphrase()    - creates a random passphrase from 4 dictionary
+#                             words (like "Tiger-Cloud-Rocket-Maple42").
+#                             Long passphrases are strong AND easy to remember!
+#                             Type 'suggest' in the program to try it.
+#   4. show_summary()       - shows how many passwords were checked and the
+#                             best score when the user quits.
+#   These extras are only used by main(), so password_strength() still
+#   works exactly as Sven designed it and can be used in other projects.
 
 import string
+import random
 
 # File names for the two lists
 DICTIONARY_FILE = "dictionary.txt"
@@ -27,6 +36,10 @@ LOWER_CHARS = string.ascii_lowercase      # a-z
 DIGIT_CHARS = string.digits               # 0-9
 SPECIAL_CHARS = string.punctuation        # symbols like ! @ # $ %
 
+
+# ---------------------------------------------------------------
+# REQUIRED FUNCTIONS (exact names and parameters from Sven)
+# ---------------------------------------------------------------
 
 def word_in_file(word, filename, case_sensitive=False):
     """Check if a word is in a file (one word per line).
@@ -135,8 +148,29 @@ def password_strength(password, min_length=10, strong_length=16):
     return strength
 
 
+# ---------------------------------------------------------------
+# OPTIONAL COMPONENTS (my creative extras)
+# ---------------------------------------------------------------
+
+def show_meter(strength):
+    """Draw a strength bar and a fun label for a score from 0 to 5."""
+    labels = [
+        "Wide open - a hacker would guess this in a blink!",
+        "Very weak - a screen door on a submarine.",
+        "Weak - getting there, keep going!",
+        "Decent - a locked door, but not a vault.",
+        "Pretty good - almost a fortress!",
+        "Fortress - the cell tower of passwords!"
+    ]
+
+    filled = "#" * strength
+    empty = "-" * (5 - strength)
+
+    print("[" + filled + empty + "]  " + labels[strength])
+
+
 def give_tips(password, min_length=10):
-    """OPTIONAL COMPONENT: print tips to help the user improve a password."""
+    """Print tips to help the user improve a password."""
     tips = []
 
     if len(password) < min_length:
@@ -161,25 +195,100 @@ def give_tips(password, min_length=10):
         print("Remember: a password of 16 or more characters is always strong!")
 
 
+def make_passphrase(word_count=4):
+    """Make a random passphrase from dictionary words.
+
+    Example: Tiger-Cloud-Rocket-Maple42
+    Picking random words makes it hard to guess, and a story like
+    "tiger, cloud, rocket, maple" is easy for a person to remember.
+    """
+    # Read the dictionary and keep only words that are 4+ letters
+    # and have only letters (no apostrophes etc.)
+    good_words = []
+    with open(DICTIONARY_FILE, "r", encoding="utf-8", errors="ignore") as file:
+        for line in file:
+            line = line.strip()
+            if len(line) >= 4 and line.isalpha():
+                good_words.append(line)
+
+    # Keep making passphrases until one is at least 16 characters long
+    passphrase = ""
+    while len(passphrase) < 16:
+        chosen = random.sample(good_words, word_count)
+
+        # Capitalize each word and join them with dashes
+        for i in range(len(chosen)):
+            chosen[i] = chosen[i].capitalize()
+        passphrase = "-".join(chosen)
+
+        # Add a random two digit number on the end
+        passphrase = passphrase + str(random.randint(10, 99))
+
+    return passphrase
+
+
+def show_summary(checked, best_score):
+    """Print a short summary of the session."""
+    print()
+    print("--- Session summary ---")
+    print("Passwords checked: " + str(checked))
+
+    if checked > 0:
+        print("Best score: " + str(best_score) + " out of 5")
+        if best_score == 5:
+            print("You made a password fortress. Great job!")
+        else:
+            print("Next time, try for a 5 - long passphrases are the easy way!")
+
+
+# ---------------------------------------------------------------
+# MAIN PROGRAM
+# ---------------------------------------------------------------
+
 def main():
     """Let the user check passwords until they choose to quit."""
-    print("=== Password Strength Checker ===")
+    print("=" * 50)
+    print("      PASSWORD STRENGTH CHECKER")
+    print("=" * 50)
     print("Strength goes from 0 (very weak) to 5 (very strong).")
+    print("Commands:  'suggest' = get a random passphrase idea")
+    print("           'quit'    = exit the program")
+    print("Tip: never type your REAL work password into a tool you don't trust.")
+    print("     Try a similar one instead!")
 
+    checked = 0          # how many passwords were checked
+    best_score = 0       # the highest score so far
     keep_going = True
 
     while keep_going:
         print()
-        password = input("Enter a password to check (or type 'quit' to exit): ")
+        password = input("Enter a password to check: ")
 
         if password == "quit":
             keep_going = False
+
+        elif password == "suggest":
+            try:
+                idea = make_passphrase()
+                print("How about this passphrase:  " + idea)
+                print("Let's see how strong it is:")
+                strength = password_strength(idea)
+                show_meter(strength)
+                print("Don't use this exact one, make up your own!")
+            except FileNotFoundError:
+                print("Error: could not find " + DICTIONARY_FILE + ".")
+                keep_going = False
+
         else:
             try:
                 strength = password_strength(password)
-                print("Password strength: " + str(strength) + " out of 5")
+                show_meter(strength)
 
-                # Optional component: only give tips if it is not a 5
+                checked = checked + 1
+                if strength > best_score:
+                    best_score = strength
+
+                # Only give tips if it is not a 5
                 if strength < 5:
                     give_tips(password)
 
@@ -189,6 +298,7 @@ def main():
                 print("Make sure both files are in the same folder as this program.")
                 keep_going = False
 
+    show_summary(checked, best_score)
     print("Thanks for using the Password Strength Checker. Stay secure!")
 
 
