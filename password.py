@@ -1,37 +1,3 @@
-# Password Strength Checker
-# Requested by: María García (Security Team)
-# Design by: Sven Larson (Software Architect)
-#
-# This program lets employees type in passwords and see how strong they are.
-# The strength is a number from 0 (very weak) to 5 (very strong).
-#
-# Files needed (put them in the same folder as this program):
-#   dictionary file  - about 70,000 words, one word per line
-#   toppasswords.txt - the top 1 million passwords, one per line
-#
-# REQUIRED FUNCTIONS (from Sven's design):
-#   word_in_file, word_has_character, word_complexity,
-#   password_strength, main
-#
-# OPTIONAL COMPONENTS (added by me, the junior developer):
-#   1. find_data_file()      - looks for the word files in the current folder
-#                              AND in the folder where this program lives, so
-#                              the program works no matter where it is run from.
-#                              If a file still can't be found, main() asks the
-#                              user to type the file name (it does not crash).
-#   2. give_tips()           - tells the user which kinds of characters are
-#                              missing so they learn HOW to improve.
-#   3. show_meter()          - draws a strength bar like [###--] with a label.
-#   4. estimate_crack_time() - a fun guess of how long a computer would need
-#                              to crack the password by brute force.
-#   5. make_passphrase()     - creates a random passphrase from 4 dictionary
-#                              words (like "House-River-Apple-Lemon37").
-#                              Enter S in the program to try it.
-#   6. show_summary()        - shows how many passwords were checked and the
-#                              best score when the user quits with Q.
-#   These extras are only used by main(), so password_strength() still
-#   works exactly as Sven designed it and can be used in other projects.
-
 import os
 import string
 import random
