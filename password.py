@@ -43,9 +43,7 @@ DIGIT_CHARS = string.digits               # 0-9
 SPECIAL_CHARS = string.punctuation        # symbols like ! @ # $ %
 
 
-# ---------------------------------------------------------------
-# OPTIONAL: finding the word files
-# ---------------------------------------------------------------
+
 
 def find_data_file(default_name, keyword):
     """Find a data file and return its path.
@@ -82,9 +80,6 @@ DICTIONARY_FILE = find_data_file("dictionary.txt", "dict")
 TOP_PASSWORDS_FILE = find_data_file("toppasswords.txt", "top")
 
 
-# ---------------------------------------------------------------
-# REQUIRED FUNCTIONS (exact names and parameters from Sven)
-# ---------------------------------------------------------------
 
 def word_in_file(word, filename, case_sensitive=False):
     """Check if a word is in a file (one word per line).
@@ -105,14 +100,14 @@ def word_in_file(word, filename, case_sensitive=False):
     # Open the file and look at each line
     with open(filename, "r", encoding="utf-8", errors="ignore") as file:
         for line in file:
-            line = line.strip()      # remove the newline and extra spaces
+            line = line.strip()      
 
             if case_sensitive == False:
                 line = line.lower()
 
             if line == word:
                 found = True
-                break                # no need to keep looking
+                break                
 
     return found
 
@@ -203,9 +198,6 @@ def password_strength(password, min_length=10, strong_length=16):
     return strength
 
 
-# ---------------------------------------------------------------
-# OPTIONAL COMPONENTS (my creative extras)
-# ---------------------------------------------------------------
 
 def show_meter(strength):
     """Draw a strength bar and a fun label for a score from 0 to 5."""
@@ -376,10 +368,6 @@ def check_files_exist():
 
     return True
 
-
-# ---------------------------------------------------------------
-# MAIN PROGRAM
-# ---------------------------------------------------------------
 
 def main():
     """Let the user check passwords until they enter Q to quit."""
