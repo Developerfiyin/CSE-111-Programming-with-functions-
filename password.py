@@ -24,7 +24,6 @@ def find_data_file(default_name, keyword):
     this_folder = os.path.dirname(os.path.abspath(__file__))
     folders = [os.getcwd(), this_folder]
 
-    # Try the exact file name first (ignoring upper/lower case)
     for folder in folders:
         if os.path.isdir(folder):
             for name in os.listdir(folder):
