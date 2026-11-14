@@ -44,14 +44,9 @@ def find_data_file(default_name, keyword):
     return default_name
 
 
-# File names for the two lists (wordlist.txt is the dictionary file)
 DICTIONARY_FILE = find_data_file("wordlist.txt", "wordlist")
 TOP_PASSWORDS_FILE = find_data_file("toppasswords.txt", "toppass")
 
-
-# ---------------------------------------------------------------
-# REQUIRED FUNCTIONS (exact names and parameters from Sven)
-# ---------------------------------------------------------------
 
 def word_in_file(word, filename, case_sensitive=False):
     """Check if a word is in a file (one word per line).
@@ -63,7 +58,6 @@ def word_in_file(word, filename, case_sensitive=False):
 
     Returns True if the word is found, otherwise False.
     """
-    # If we are NOT case sensitive, change the word to lower case
     if case_sensitive == False:
         word = word.lower()
 
@@ -72,14 +66,13 @@ def word_in_file(word, filename, case_sensitive=False):
     # Open the file and look at each line
     with open(filename, "r", encoding="utf-8", errors="ignore") as file:
         for line in file:
-            line = line.strip()      # remove the newline and extra spaces
-
+            line = line.strip()     
             if case_sensitive == False:
                 line = line.lower()
 
             if line == word:
                 found = True
-                break                # no need to keep looking
+                break            
 
     return found
 
@@ -134,8 +127,7 @@ def password_strength(password, min_length=10, strong_length=16):
 
     Prints a message about the password and returns the strength number.
     """
-    # ENHANCEMENT 1 (used here): if this function was imported by another
-    # program that runs from a different folder, look for the files again.
+    
     global DICTIONARY_FILE
     global TOP_PASSWORDS_FILE
     if not os.path.isfile(DICTIONARY_FILE):
@@ -163,8 +155,6 @@ def password_strength(password, min_length=10, strong_length=16):
         print("Password is long, length trumps complexity this is a good password.")
         return 5
 
-    # Rule 5: everything else is scored by complexity
-    # Strength is a base score of 1 plus the complexity score
     complexity = word_complexity(password)
     strength = 1 + complexity
 
@@ -178,10 +168,6 @@ def password_strength(password, min_length=10, strong_length=16):
 
     return strength
 
-
-# ---------------------------------------------------------------
-# OPTIONAL COMPONENTS (my creative extras)
-# ---------------------------------------------------------------
 
 # ENHANCEMENT 2: strength bar with a fun label
 def show_meter(strength):
